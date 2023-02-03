@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { AccountService } from './_services/account.service';
+import { LocalstorageService } from './_services/localstorage.service';
 
 @Component({
     selector: 'app-root',
@@ -7,15 +9,22 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-    title = 'client';
+    constructor(
+        private http: HttpClient,
+        private _accountService: AccountService,
+        private _userLocalStorage: LocalstorageService
+    ) {
+        this.setCurrentUser();
+    }
 
-    constructor(private http: HttpClient) {}
+    ngOnInit(): void {}
 
-    ngOnInit(): void {
-        this.http.get(`https://localhost:5001/api/v1/users`).subscribe({
-            next: (resp) => console.log(resp),
-            error: (error) => console.log(error),
-            complete: () => console.log('Request completed!'),
+    setCurrentUser() {
+        const currentUser$ = this._userLocalStorage.getItem('user');
+        currentUser$.subscribe({
+            next: (user) => {
+                if (user) this._accountService.setCurrentUser(JSON.parse(user));
+            },
         });
     }
 }
