@@ -1,0 +1,45 @@
+<form
+    #registerForm="ngForm"
+    (ngSubmit)="onRegister()"
+    autocomplete="off"
+    *ngIf="!(accountService.currentUser$ | async)"
+>
+    <h2 class="text-center">Sign Up</h2>
+    <hr />
+    <div class="mb-3">
+        <div class="form-floating mb-3">
+            <input
+                name="username"
+                [(ngModel)]="model.username"
+                class="form-control form-control-lg"
+                type="text"
+                placeholder="Username"
+                autocomplete="username"
+            />
+            <label for="floatingInput">Username</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input
+                name="password"
+                [(ngModel)]="model.password"
+                class="form-control form-control-lg"
+                type="text"
+                placeholder="Password"
+                autocomplete="password"
+            />
+            <label for="floatingInput">Password</label>
+        </div>
+    </div>
+    <div class="text-center">
+        <button class="btn btn-lg btn-success me-2" type="submit">
+            Register
+        </button>
+        <button
+            class="btn btn-lg btn-outline-secondary"
+            type="button"
+            (click)="onCancel()"
+        >
+            Cancel
+        </button>
+    </div>
+</form>

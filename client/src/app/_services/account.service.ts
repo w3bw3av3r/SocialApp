@@ -38,6 +38,20 @@ export class AccountService {
             );
     }
 
+    register(model: any) {
+        return this._http
+            .post<User>(`${this.baseUrl}account/register`, model)
+            .pipe(
+                tap((user) => {
+                    this._userSubject$.next(user);
+                    this._userLocalStorage.setItem(
+                        'user',
+                        JSON.stringify(user)
+                    );
+                })
+            );
+    }
+
     logout() {
         this._userSubject$.next(null);
         this._userLocalStorage.removeItem('user');
