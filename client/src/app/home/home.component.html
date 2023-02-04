@@ -3,13 +3,10 @@
         <h1>Find your match</h1>
         <p class="lead">Come on in to view your matches... Sign up now!</p>
         <div class="text-center">
-            <button
-                class="btn bg-dark text-light btn-lg me-2"
-                (click)="registerToggle()"
-            >
+            <button class="btn btn-lg btn-dark me-2" (click)="registerToggle()">
                 Register
             </button>
-            <button class="btn btn-outline-success btn-lg">Learn more</button>
+            <button class="btn btn-lg btn-outline-success">Learn more</button>
         </div>
     </div>
     <div class="container" *ngIf="registerMode">
