@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
@@ -17,11 +18,16 @@ export class AccountService {
 
     constructor(
         private _http: HttpClient,
-        private _userLocalStorage: LocalstorageService
+        private _userLocalStorage: LocalstorageService,
+        private router: Router
     ) {}
 
     setCurrentUser(user: User) {
         this._userSubject$.next(user);
+    }
+
+    public get currentUserValue() {
+        return this._userSubject$.getValue();
     }
 
     login(model: any) {
@@ -53,7 +59,16 @@ export class AccountService {
     }
 
     logout() {
-        this._userSubject$.next(null);
-        this._userLocalStorage.removeItem('user');
+        this._userLocalStorage
+            .removeItem('user')
+            .pipe(
+                tap((isRemoved) => {
+                    if (isRemoved) {
+                        this._userSubject$.next(null);
+                        this.router.navigateByUrl('/');
+                    }
+                })
+            )
+            .subscribe();
     }
 }
