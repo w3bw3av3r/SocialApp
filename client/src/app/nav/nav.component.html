@@ -34,7 +34,7 @@
         <div
             class="dropdown"
             dropdown
-            *ngIf="accountService.isLoggedin$ | async"
+            *ngIf="accountService.currentUser$ | async as user"
         >
             <a
                 dropdownToggle
@@ -46,7 +46,10 @@
                 }}!</a
             >
             <div class="dropdown-menu mt-4" *dropdownMenu>
-                <a class="dropdown-item cursor-pointer" role="button"
+                <a
+                    routerLink="/member/edit"
+                    class="dropdown-item cursor-pointer"
+                    role="button"
                     >Edit Profile</a
                 >
                 <a class="dropdown-item" role="button" (click)="onLogout()"
