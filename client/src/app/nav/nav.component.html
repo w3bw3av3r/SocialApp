@@ -40,12 +40,15 @@
                 dropdownToggle
                 class="dropdown-toggle text-light text-decoration-none"
                 role="button"
-                >Welcome
-                {{
-                    (accountService.currentUser$ | async)?.username | titlecase
-                }}!</a
             >
-            <div class="dropdown-menu mt-4" *dropdownMenu>
+                <img
+                    src="{{ user.photoUrl || './assets/user.png' }}"
+                    alt="{{ user.username }}"
+                    width="50"
+                    class="rounded-circle"
+                />
+            </a>
+            <div class="dropdown-menu mt-3" *dropdownMenu>
                 <a
                     routerLink="/member/edit"
                     class="dropdown-item cursor-pointer"

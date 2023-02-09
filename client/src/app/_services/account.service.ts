@@ -23,6 +23,7 @@ export class AccountService {
     ) {}
 
     setCurrentUser(user: User) {
+        this._userLocalStorage.setItem('user', JSON.stringify(user));
         this._userSubject$.next(user);
     }
 
@@ -35,11 +36,7 @@ export class AccountService {
             .post<User>(`${this.baseUrl}account/login`, model)
             .pipe(
                 tap((user) => {
-                    this._userSubject$.next(user);
-                    this._userLocalStorage.setItem(
-                        'user',
-                        JSON.stringify(user)
-                    );
+                    this.setCurrentUser(user);
                 })
             );
     }
@@ -49,11 +46,7 @@ export class AccountService {
             .post<User>(`${this.baseUrl}account/register`, model)
             .pipe(
                 tap((user) => {
-                    this._userSubject$.next(user);
-                    this._userLocalStorage.setItem(
-                        'user',
-                        JSON.stringify(user)
-                    );
+                    this.setCurrentUser(user);
                 })
             );
     }

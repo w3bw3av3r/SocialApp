@@ -27,7 +27,7 @@ export class MemberDetailComponent implements OnInit {
             height: '400px',
             arrowPrevIcon: 'fa fa-chevron-left',
             arrowNextIcon: 'fa fa-chevron-right',
-            imagePercent: 80,
+            imagePercent: 100,
             thumbnailsColumns: 4,
             imageAnimation: NgxGalleryAnimation.Slide,
             preview: true,

@@ -11,6 +11,7 @@ import { TestErrorComponent } from './errors/test-error/test-error.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
 
 const routes: Routes = [
     {
@@ -37,11 +38,11 @@ const routes: Routes = [
             },
             {
                 path: 'member/edit',
-                // component: MemberEditComponent,
-                loadComponent: () =>
-                    import('./members/member-edit/member-edit.component').then(
-                        (c) => c.MemberEditComponent
-                    ),
+                component: MemberEditComponent,
+                // loadComponent: () =>
+                //     import('./members/member-edit/member-edit.component').then(
+                //         (c) => c.MemberEditComponent
+                //     ),
                 canDeactivate: [PreventUnsavedChangesGuard],
             },
             {

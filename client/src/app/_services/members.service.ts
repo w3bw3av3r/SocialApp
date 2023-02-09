@@ -1,8 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, of } from 'rxjs';
 import { Member } from '../_models/member';
-// import { LocalstorageService } from './localstorage.service';
 
 @Injectable({
     providedIn: 'root',
@@ -41,20 +40,14 @@ export class MembersService {
         );
     }
 
-    // getHttpOptions() {
-    //     this._userLocalStorage.getItem('user').subscribe({
-    //         next: (user) => {
-    //             if (user) {
-    //                 const userToken = JSON.parse(user);
-    //                 this.token = userToken.token;
-    //             }
-    //         },
-    //     });
+    setMainPhoto(photoId: number) {
+        return this.http.put(
+            `${this.baseUrl}users/set-main-photo/${photoId}`,
+            {}
+        );
+    }
 
-    //     return {
-    //         headers: new HttpHeaders({
-    //             Authorization: `Bearer ${this.token}`,
-    //         }),
-    //     };
-    // }
+    deletePhoto(photoId: number) {
+        return this.http.delete(`${this.baseUrl}users/delete-photo/${photoId}`);
+    }
 }

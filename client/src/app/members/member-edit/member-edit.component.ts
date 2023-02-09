@@ -1,17 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { Component, HostListener, ViewChild } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
-import { TabsModule } from 'ngx-bootstrap/tabs';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { NgForm } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { AccountService } from 'src/app/_services/account.service';
 import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
-    standalone: true,
     selector: 'app-member-edit',
     templateUrl: './member-edit.component.html',
     styleUrls: ['./member-edit.component.css'],
-    imports: [CommonModule, FormsModule, TabsModule, ToastrModule],
 })
 export class MemberEditComponent {
     @HostListener('window:beforeunload', ['$event']) unloadNotification(

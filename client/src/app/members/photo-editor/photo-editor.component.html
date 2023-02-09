@@ -1,0 +1,130 @@
+<div class="row mt-2 overflow-scroll" *ngIf="member">
+    <div class="col-2 p-0 mb-2" *ngFor="let photo of member.photos">
+        <div class="d-flex flex-column me-3">
+            <div class="d-flex justify-content-center">
+                <img
+                    class="img-thumbnail border-0 rounded-4 d-flex"
+                    src="{{ photo.url }}"
+                    alt="{{ member.knownAs }}"
+                    width="120"
+                />
+            </div>
+            <div class="text-center mt-2 d-flex justify-content-center">
+                <button
+                    tooltip="Set as main photo"
+                    (click)="setMainPhoto(photo)"
+                    [ngClass]="
+                        photo.isMain
+                            ? 'btn-success active'
+                            : 'btn-outline-success'
+                    "
+                    [disabled]="photo.isMain"
+                    class="btn btn-sm me-2"
+                >
+                    <i class="fa fa-user"></i>
+                </button>
+                <button
+                    tooltip="Delete photo"
+                    (click)="deletePhoto(photo.id)"
+                    class="btn btn-sm btn-danger"
+                    [disabled]="photo.isMain"
+                >
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4" *ngIf="uploader">
+    <div class="col-12">
+        <h3>Upload photos</h3>
+        <div
+            ng2FileDrop
+            [ngClass]="{ 'nv-file-over': hasImageDropzoneOver }"
+            (fileOver)="fileOverImageDropzone($event)"
+            [uploader]="uploader"
+            class="card d-flex justify-content-center align-items-center border border-3 border-dark"
+            style="border-style: dotted !important; min-height: 200px"
+        >
+            Drop your image(s) here
+        </div>
+        <div class="mt-2">
+            <span>Or&nbsp;&nbsp;</span>
+            <input
+                type="file"
+                ng2FileSelect
+                [uploader]="uploader"
+                multiple
+            /><br />
+        </div>
+    </div>
+
+    <div
+        class="col-12 mt-4"
+        style="margin-bottom: 40px"
+        *ngIf="uploader.queue.length > 0"
+    >
+        <h3>Upload queue</h3>
+        <p>Queue length: {{ uploader.queue.length }}</p>
+
+        <table class="table table-dark table-striped-columns">
+            <thead>
+                <tr>
+                    <th width="50%">Name</th>
+                    <th>Size</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of uploader.queue">
+                    <td>
+                        <strong>{{ item?.file?.name }}</strong>
+                    </td>
+                    <td *ngIf="uploader.options.isHTML5" nowrap>
+                        {{ item?.file?.size / 1024 / 1024 | number : ".2" }} MB
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div>
+            <div>
+                Queue progress:
+                <div class="progress mt-2">
+                    <div
+                        class="progress-bar"
+                        role="progressbar"
+                        [ngStyle]="{ width: uploader.progress + '%' }"
+                    ></div>
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+                <button
+                    type="button"
+                    class="btn btn-success btn-s"
+                    (click)="uploader.uploadAll()"
+                    [disabled]="!uploader.getNotUploadedItems().length"
+                >
+                    <span class="glyphicon glyphicon-upload"></span> Upload all
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-warning btn-s"
+                    (click)="uploader.cancelAll()"
+                    [disabled]="!uploader.isUploading"
+                >
+                    <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                    all
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-danger btn-s"
+                    (click)="uploader.clearQueue()"
+                    [disabled]="!uploader.queue.length"
+                >
+                    <span class="glyphicon glyphicon-trash"></span> Remove all
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
