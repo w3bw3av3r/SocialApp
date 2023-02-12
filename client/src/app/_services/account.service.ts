@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { Member } from '../_models/member';
 
 import { User } from '../_models/user';
 import { LocalstorageService } from './localstorage.service';
+import { MembersService } from './members.service';
 
 @Injectable({
     providedIn: 'root',
@@ -19,6 +21,7 @@ export class AccountService {
     constructor(
         private _http: HttpClient,
         private _userLocalStorage: LocalstorageService,
+        private _membersService: MembersService,
         private router: Router
     ) {}
 
@@ -57,6 +60,7 @@ export class AccountService {
             .pipe(
                 tap((isRemoved) => {
                     if (isRemoved) {
+                        this._membersService.members = [];
                         this._userSubject$.next(null);
                         this.router.navigateByUrl('/');
                     }

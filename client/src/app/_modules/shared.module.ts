@@ -8,6 +8,7 @@ import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FileUploadModule } from 'ng2-file-upload';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 @NgModule({
     imports: [
@@ -20,6 +21,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
         NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' }),
         FileUploadModule,
         BsDatepickerModule.forRoot(),
+        PaginationModule.forRoot(),
     ],
     exports: [
         TooltipModule,
@@ -30,6 +32,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
         NgxSpinnerModule,
         FileUploadModule,
         BsDatepickerModule,
+        PaginationModule,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
