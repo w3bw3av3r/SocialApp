@@ -43,18 +43,13 @@ export class PhotoEditorComponent implements OnInit {
             if (response) {
                 const photos = JSON.parse(response);
                 this.member?.photos.push(photos);
+                if (photos.isMain && this.user && this.member) {
+                    this.user.photoUrl = this.member.photoUrl = photos.url;
+                    this.accountService.setCurrentUser(this.user);
+                }
             }
         };
-
         this.hasImageDropzoneOver = false;
-
-        // this.response = '';
-
-        // this.uploader.response.subscribe((res) => {
-        //     console.log(res);
-        //     this.response = res;
-        //     this.toast.show(res);
-        // });
     }
 
     ngOnInit(): void {}

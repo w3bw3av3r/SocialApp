@@ -7,6 +7,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FileUploadModule } from 'ng2-file-upload';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @NgModule({
     imports: [
@@ -18,6 +19,7 @@ import { FileUploadModule } from 'ng2-file-upload';
         NgxGalleryModule,
         NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' }),
         FileUploadModule,
+        BsDatepickerModule.forRoot(),
     ],
     exports: [
         TooltipModule,
@@ -27,6 +29,7 @@ import { FileUploadModule } from 'ng2-file-upload';
         NgxGalleryModule,
         NgxSpinnerModule,
         FileUploadModule,
+        BsDatepickerModule,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
