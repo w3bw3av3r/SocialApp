@@ -51,6 +51,7 @@ export class MembersService {
         minAge,
         maxAge,
         gender,
+        orderBy,
     }: UserParams) {
         let params = new HttpParams();
 
@@ -59,6 +60,7 @@ export class MembersService {
         params = params.append('minAge', minAge);
         params = params.append('maxAge', maxAge);
         params = params.append('gender', gender);
+        params = params.append('orderBy', orderBy);
         return params;
     }
 
