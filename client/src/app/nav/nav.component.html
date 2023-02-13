@@ -46,6 +46,7 @@
                     alt="{{ user.username }}"
                     width="50"
                     class="rounded-circle"
+                    [tooltip]="user.knownAs"
                 />
             </a>
             <div class="dropdown-menu mt-3" *dropdownMenu>

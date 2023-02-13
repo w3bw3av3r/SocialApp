@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { AccountService } from 'src/app/_services/account.service';
+import { MembersService } from 'src/app/_services/members.service';
 import { Member } from 'src/app/_models/member';
 import { Pagination } from 'src/app/_models/pagination';
-import { MembersService } from 'src/app/_services/members.service';
+import { User } from 'src/app/_models/user';
+import { UserParams } from 'src/app/_models/userParams';
+import { take } from 'rxjs';
 
 @Component({
     selector: 'app-member-list',
@@ -12,31 +16,42 @@ export class MemberListComponent implements OnInit {
     // members$ = this.memberService.getMembers();
     members: Member[] = [];
     pagination: Pagination | undefined;
-    pageNumber = 1;
-    pageSize = 12;
+    userParams: UserParams | undefined;
+    user: User | undefined;
 
-    constructor(private memberService: MembersService) {}
+    constructor(
+        private memberService: MembersService,
+        private accountService: AccountService
+    ) {
+        this.accountService.currentUser$.pipe(take(1)).subscribe({
+            next: (user) => {
+                if (user) {
+                    this.userParams = new UserParams(user);
+                    this.user = user;
+                }
+            },
+        });
+    }
 
     ngOnInit(): void {
         this.loadMembers();
     }
 
     loadMembers() {
-        this.memberService
-            .getMembers(this.pageNumber, this.pageSize)
-            .subscribe({
-                next: (response) => {
-                    if (response.result && response.pagination) {
-                        this.members = response.result;
-                        this.pagination = response.pagination;
-                    }
-                },
-            });
+        if (!this.userParams) return;
+        this.memberService.getMembers(this.userParams).subscribe({
+            next: (response) => {
+                if (response.result && response.pagination) {
+                    this.members = response.result;
+                    this.pagination = response.pagination;
+                }
+            },
+        });
     }
 
     pageChanged(e: any) {
-        if (this.pageNumber !== e.page) {
-            this.pageNumber = e.page;
+        if (this.userParams && this.userParams?.pageNumber !== e.page) {
+            this.userParams.pageNumber = e.page;
             this.loadMembers();
         }
     }
