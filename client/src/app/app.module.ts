@@ -25,6 +25,7 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 import { TextInputComponent } from './_forms/text-input/text-input.component';
 import { DatePickerComponent } from './_forms/date-picker/date-picker.component';
+import { TimeAgoPipe } from './_pipes/time-ago.pipe';
 
 @NgModule({
     declarations: [
@@ -44,6 +45,7 @@ import { DatePickerComponent } from './_forms/date-picker/date-picker.component'
         MemberEditComponent,
         TextInputComponent,
         DatePickerComponent,
+        TimeAgoPipe,
     ],
     imports: [
         BrowserAnimationsModule,
