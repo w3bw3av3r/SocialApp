@@ -5,8 +5,8 @@ export class UserParams {
     minAge = 18;
     maxAge = 80;
     pageNumber = 1;
-    pageSize = 12;
-    orderBy = 'listActive';
+    pageSize = 6;
+    orderBy = 'lastActive';
 
     constructor(user: User) {
         this.gender = user.gender === 'female' ? 'male' : 'female';
