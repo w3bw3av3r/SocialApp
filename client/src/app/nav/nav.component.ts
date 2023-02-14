@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AccountService } from '../_services/account.service';
+import { MembersService } from '../_services/members.service';
 
 @Component({
     selector: 'app-nav',
@@ -13,6 +14,7 @@ export class NavComponent {
 
     constructor(
         public accountService: AccountService,
+        private memberService: MembersService,
         private router: Router,
         private toastr: ToastrService
     ) {
@@ -27,5 +29,6 @@ export class NavComponent {
 
     onLogout() {
         this.accountService.logout();
+        this.memberService.members = [];
     }
 }

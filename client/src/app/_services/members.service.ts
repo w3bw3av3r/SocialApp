@@ -1,8 +1,11 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, of } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map, of, take } from 'rxjs';
+
+import { AccountService } from './account.service';
 import { Member } from '../_models/member';
 import { PaginatedResult } from '../_models/pagination';
+import { User } from '../_models/user';
 import { UserParams } from '../_models/userParams';
 
 @Injectable({
@@ -12,14 +15,44 @@ export class MembersService {
     private readonly baseUrl = 'https://localhost:5001/api/v1/';
     members: Member[] = [];
     memberCache = new Map();
+    user: User | undefined;
+    userParams: UserParams | undefined;
 
-    constructor(private http: HttpClient) {}
+    constructor(
+        private http: HttpClient,
+        private accountService: AccountService
+    ) {
+        this.accountService.currentUser$.pipe(take(1)).subscribe({
+            next: (user) => {
+                if (user) {
+                    this.userParams = new UserParams(user);
+                    this.user = user;
+                }
+            },
+        });
+    }
+
+    getUserParams() {
+        return this.userParams;
+    }
+
+    setUserParams(params: UserParams) {
+        this.userParams = params;
+    }
+
+    resetUserParams() {
+        if (this.user) {
+            this.userParams = new UserParams(this.user);
+            return this.userParams;
+        }
+
+        return;
+    }
 
     getMembers(userParams: UserParams) {
         const response = this.memberCache.get(
             Object.values(userParams).join('-')
         );
-        console.debug(`Cached Response >>>`, response);
         if (response) return of(response);
 
         let params = this._getPaginationHeaders(userParams);
@@ -33,13 +66,7 @@ export class MembersService {
                     Object.values(userParams).join('-'),
                     response
                 );
-                console.debug(
-                    `Newly set cached response >>>`,
-                    this.memberCache
-                );
-                for (let [key, value] of this.memberCache.entries()) {
-                    console.debug(`Cached key value pair(s) >>>`, key, value);
-                }
+
                 return response;
             })
         );
@@ -52,7 +79,6 @@ export class MembersService {
 
         if (member) return of(member);
 
-        console.log('Member >>>', member);
         return this.http.get<Member>(`${this.baseUrl}users/${username}`);
     }
 

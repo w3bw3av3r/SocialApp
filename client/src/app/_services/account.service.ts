@@ -21,7 +21,6 @@ export class AccountService {
     constructor(
         private _http: HttpClient,
         private _userLocalStorage: LocalstorageService,
-        private _membersService: MembersService,
         private router: Router
     ) {}
 
@@ -60,7 +59,6 @@ export class AccountService {
             .pipe(
                 tap((isRemoved) => {
                     if (isRemoved) {
-                        this._membersService.members = [];
                         this._userSubject$.next(null);
                         this.router.navigateByUrl('/');
                     }
