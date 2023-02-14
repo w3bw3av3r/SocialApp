@@ -11,17 +11,72 @@ import { UserParams } from '../_models/userParams';
 export class MembersService {
     private readonly baseUrl = 'https://localhost:5001/api/v1/';
     members: Member[] = [];
+    memberCache = new Map();
 
     constructor(private http: HttpClient) {}
 
     getMembers(userParams: UserParams) {
-        // if (this.members.length > 0) return of(this.members);
+        const response = this.memberCache.get(
+            Object.values(userParams).join('-')
+        );
+        console.debug(`Cached Response >>>`, response);
+        if (response) return of(response);
+
         let params = this._getPaginationHeaders(userParams);
 
         return this._getPaginatedResults<Member[]>(
             `${this.baseUrl}users`,
             params
+        ).pipe(
+            map((response) => {
+                this.memberCache.set(
+                    Object.values(userParams).join('-'),
+                    response
+                );
+                console.debug(
+                    `Newly set cached response >>>`,
+                    this.memberCache
+                );
+                for (let [key, value] of this.memberCache.entries()) {
+                    console.debug(`Cached key value pair(s) >>>`, key, value);
+                }
+                return response;
+            })
         );
+    }
+
+    getMember(username: string) {
+        const member = [...this.memberCache.values()]
+            .reduce((arr, elem) => arr.concat(elem.result), [])
+            .find((member: Member) => member.userName === username);
+
+        if (member) return of(member);
+
+        console.log('Member >>>', member);
+        return this.http.get<Member>(`${this.baseUrl}users/${username}`);
+    }
+
+    updateMember(member: Member) {
+        return this.http.put(`${this.baseUrl}users`, member).pipe(
+            map((_) => {
+                const memberIndex = this.members.indexOf(member);
+                this.members[memberIndex] = {
+                    ...this.members[memberIndex],
+                    ...member,
+                };
+            })
+        );
+    }
+
+    setMainPhoto(photoId: number) {
+        return this.http.put(
+            `${this.baseUrl}users/set-main-photo/${photoId}`,
+            {}
+        );
+    }
+
+    deletePhoto(photoId: number) {
+        return this.http.delete(`${this.baseUrl}users/delete-photo/${photoId}`);
     }
 
     private _getPaginatedResults<T>(url: string, params: HttpParams) {
@@ -62,34 +117,5 @@ export class MembersService {
         params = params.append('gender', gender);
         params = params.append('orderBy', orderBy);
         return params;
-    }
-
-    getMember(username: string) {
-        const member = this.members.find((m) => m.userName === username);
-        if (member) return of(member);
-        return this.http.get<Member>(`${this.baseUrl}users/${username}`);
-    }
-
-    updateMember(member: Member) {
-        return this.http.put(`${this.baseUrl}users`, member).pipe(
-            map((_) => {
-                const memberIndex = this.members.indexOf(member);
-                this.members[memberIndex] = {
-                    ...this.members[memberIndex],
-                    ...member,
-                };
-            })
-        );
-    }
-
-    setMainPhoto(photoId: number) {
-        return this.http.put(
-            `${this.baseUrl}users/set-main-photo/${photoId}`,
-            {}
-        );
-    }
-
-    deletePhoto(photoId: number) {
-        return this.http.delete(`${this.baseUrl}users/delete-photo/${photoId}`);
     }
 }
