@@ -39,7 +39,8 @@ export class AccountService {
             .pipe(
                 tap((user) => {
                     this.setCurrentUser(user);
-                })
+                }),
+                map((user) => user)
             );
     }
 
