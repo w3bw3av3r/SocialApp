@@ -110,9 +110,14 @@ export class MembersService {
         return this.http.post(`${this.baseUrl}likes/${username}`, {});
     }
 
-    getLikes(predicate: string) {
-        return this.http.get<Member[]>(
-            `${this.baseUrl}likes?predicate=${predicate}`
+    getLikes(predicate: string, pageNumber: number, pageSize: number) {
+        let params = this._getPaginationHeaders({ pageNumber, pageSize });
+
+        params = params.append('predicate', predicate);
+
+        return this._getPaginatedResults<Member[]>(
+            `${this.baseUrl}likes?predicate=${predicate}`,
+            params
         );
     }
 
@@ -144,15 +149,16 @@ export class MembersService {
         maxAge,
         gender,
         orderBy,
-    }: UserParams) {
+    }: Partial<UserParams>) {
         let params = new HttpParams();
 
-        params = params.append('pageNumber', pageNumber);
-        params = params.append('pageSize', pageSize);
-        params = params.append('minAge', minAge);
-        params = params.append('maxAge', maxAge);
-        params = params.append('gender', gender);
-        params = params.append('orderBy', orderBy);
+        params = params.append('pageNumber', pageNumber ? pageNumber : 0);
+        params = params.append('pageSize', pageSize ? pageSize : 6);
+        params = params.append('minAge', minAge ? minAge : 18);
+        params = params.append('maxAge', maxAge ? maxAge : 80);
+        params = params.append('gender', gender ? gender : 'Male');
+        params = params.append('orderBy', orderBy ? orderBy : 'lastActive');
+
         return params;
     }
 }
