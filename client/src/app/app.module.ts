@@ -26,6 +26,7 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
 import { TextInputComponent } from './_forms/text-input/text-input.component';
 import { DatePickerComponent } from './_forms/date-picker/date-picker.component';
 import { TimeAgoPipe } from './_pipes/time-ago.pipe';
+import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
 
 @NgModule({
     declarations: [
@@ -46,6 +47,7 @@ import { TimeAgoPipe } from './_pipes/time-ago.pipe';
         TextInputComponent,
         DatePickerComponent,
         TimeAgoPipe,
+        MemberMessagesComponent,
     ],
     imports: [
         BrowserAnimationsModule,

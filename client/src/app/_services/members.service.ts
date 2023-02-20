@@ -4,9 +4,9 @@ import { map, of, take } from 'rxjs';
 
 import { AccountService } from './account.service';
 import { Member } from '../_models/member';
-import { PaginatedResult } from '../_models/pagination';
 import { User } from '../_models/user';
 import { UserParams } from '../_models/userParams';
+import { getPaginatedResults, getPaginationHeaders } from './paginationHelper';
 
 @Injectable({
     providedIn: 'root',
@@ -56,11 +56,17 @@ export class MembersService {
 
         if (response) return of(response);
 
-        let params = this._getPaginationHeaders(userParams);
+        let params = getPaginationHeaders(userParams);
 
-        return this._getPaginatedResults<Member[]>(
+        params = params.append('minAge', userParams.minAge);
+        params = params.append('maxAge', userParams.maxAge);
+        params = params.append('gender', userParams.gender);
+        params = params.append('orderBy', userParams.orderBy);
+
+        return getPaginatedResults<Member[]>(
             `${this.baseUrl}users`,
-            params
+            params,
+            this.http
         ).pipe(
             map((response) => {
                 this.memberCache.set(
@@ -111,54 +117,14 @@ export class MembersService {
     }
 
     getLikes(predicate: string, pageNumber: number, pageSize: number) {
-        let params = this._getPaginationHeaders({ pageNumber, pageSize });
+        let params = getPaginationHeaders({ pageNumber, pageSize });
 
         params = params.append('predicate', predicate);
 
-        return this._getPaginatedResults<Member[]>(
+        return getPaginatedResults<Member[]>(
             `${this.baseUrl}likes?predicate=${predicate}`,
-            params
+            params,
+            this.http
         );
-    }
-
-    private _getPaginatedResults<T>(url: string, params: HttpParams) {
-        const paginatedResult: PaginatedResult<T> = new PaginatedResult<T>();
-        return this.http
-            .get<T>(url, {
-                observe: 'response',
-                params,
-            })
-            .pipe(
-                map((response) => {
-                    if (response.body) {
-                        paginatedResult.result = response.body;
-                    }
-                    const pagination = response.headers.get('Pagination');
-                    if (pagination) {
-                        paginatedResult.pagination = JSON.parse(pagination);
-                    }
-                    return paginatedResult;
-                })
-            );
-    }
-
-    private _getPaginationHeaders({
-        pageNumber,
-        pageSize,
-        minAge,
-        maxAge,
-        gender,
-        orderBy,
-    }: Partial<UserParams>) {
-        let params = new HttpParams();
-
-        params = params.append('pageNumber', pageNumber ? pageNumber : 0);
-        params = params.append('pageSize', pageSize ? pageSize : 6);
-        params = params.append('minAge', minAge ? minAge : 18);
-        params = params.append('maxAge', maxAge ? maxAge : 80);
-        params = params.append('gender', gender ? gender : 'Male');
-        params = params.append('orderBy', orderBy ? orderBy : 'lastActive');
-
-        return params;
     }
 }

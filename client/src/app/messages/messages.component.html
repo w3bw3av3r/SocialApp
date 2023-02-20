@@ -1,1 +1,210 @@
-<p>messages works!</p>
+<div class="mb-4 d-flex">
+    <div class="btn-group" name="container">
+        <button
+            class="btn btn-primary"
+            btnRadio="Unread"
+            [(ngModel)]="container"
+            (click)="loadMessages()"
+        >
+            <i class="fa fa-envelope"></i> Unread
+        </button>
+        <button
+            class="btn btn-primary"
+            btnRadio="Inbox"
+            [(ngModel)]="container"
+            (click)="loadMessages()"
+        >
+            <i class="fa fa-envelope-open"></i> Inbox
+        </button>
+        <button
+            class="btn btn-primary"
+            btnRadio="Outbox"
+            [(ngModel)]="container"
+            (click)="loadMessages()"
+        >
+            <i class="fa fa-paper-plane"></i> Outbox
+        </button>
+    </div>
+</div>
+
+<div class="row" *ngIf="messages">
+    <table
+        class="table table-responsive table-hover table-striped align-middle"
+    >
+        <thead>
+            <tr>
+                <th style="width: 40%">Message</th>
+                <th style="width: 20%">
+                    {{
+                        container === "Unread" || container === "Inbox"
+                            ? "From"
+                            : "To"
+                    }}
+                </th>
+                <th style="width: 20%">
+                    {{
+                        container === "Unread" || container === "Inbox"
+                            ? "Sent"
+                            : "Received"
+                    }}
+                </th>
+                <th style="width: 20%">Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngIf="container === 'Unread'">
+                <tr *ngIf="messages.unread?.length === 0 && !loading">
+                    <td [colSpan]="4">
+                        <span
+                            >You have no
+                            {{ container | lowercase }} messages</span
+                        >
+                    </td>
+                </tr>
+                <tr
+                    *ngFor="let message of messages.unread"
+                    role="button"
+                    [routerLink]="'/members/' + message.senderUsername"
+                    [queryParams]="{ tab: 'Messages' }"
+                >
+                    <td>{{ message.content }}</td>
+                    <td>
+                        <div>
+                            <img
+                                class="rounded-circle me-3"
+                                [width]="40"
+                                [src]="
+                                    message.senderPhotoUrl ||
+                                    './assets/user.png'
+                                "
+                                alt="{{
+                                    message.senderUsername | titlecase
+                                }} photo"
+                            />
+                            <strong>{{
+                                message.senderUsername | titlecase
+                            }}</strong>
+                        </div>
+                    </td>
+                    <td>{{ message.messageSent + "Z" | timeAgo }}</td>
+                    <td>
+                        <button
+                            class="btn btn-danger rounded-circle"
+                            (click)="$event.stopPropagation()"
+                            (click)="deleteMessage(message.id)"
+                        >
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </ng-container>
+            <ng-container *ngIf="container === 'Inbox'">
+                <tr *ngIf="messages.inbox?.length === 0 && !loading">
+                    <td [colSpan]="4">
+                        <span
+                            >You have no
+                            {{ container | lowercase }} messages</span
+                        >
+                    </td>
+                </tr>
+                <tr
+                    *ngFor="let message of messages.inbox"
+                    role="button"
+                    [routerLink]="'/members/' + message.senderUsername"
+                    [queryParams]="{ tab: 'Messages' }"
+                >
+                    <td>{{ message.content }}</td>
+                    <td>
+                        <div>
+                            <img
+                                class="rounded-circle me-3"
+                                [width]="40"
+                                [src]="
+                                    message.senderPhotoUrl ||
+                                    './assets/user.png'
+                                "
+                                alt="{{
+                                    message.senderUsername | titlecase
+                                }} photo"
+                            />
+                            <strong>{{
+                                message.senderUsername | titlecase
+                            }}</strong>
+                        </div>
+                    </td>
+                    <td>{{ message.messageSent + "Z" | timeAgo }}</td>
+                    <td>
+                        <button
+                            class="btn btn-danger rounded-circle"
+                            (click)="$event.stopPropagation()"
+                            (click)="deleteMessage(message.id)"
+                        >
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </ng-container>
+            <ng-container *ngIf="container === 'Outbox'">
+                <tr *ngIf="messages.outbox?.length === 0 && !loading">
+                    <td [colSpan]="4">
+                        <span
+                            >You have no
+                            {{ container | lowercase }} messages</span
+                        >
+                    </td>
+                </tr>
+                <tr
+                    *ngFor="let message of messages.outbox"
+                    role="button"
+                    [routerLink]="'/members/' + message.recipientUsername"
+                    [queryParams]="{ tab: 'Messages' }"
+                >
+                    <td>{{ message.content }}</td>
+                    <td>
+                        <div>
+                            <img
+                                class="rounded-circle me-3"
+                                [width]="40"
+                                [src]="
+                                    message.recipientPhotoUrl ||
+                                    './assets/user.png'
+                                "
+                                alt="{{
+                                    message.recipientUsername | titlecase
+                                }} photo"
+                            />
+                            <strong>{{
+                                message.recipientUsername | titlecase
+                            }}</strong>
+                        </div>
+                    </td>
+                    <td>{{ message.messageSent + "Z" | timeAgo }}</td>
+                    <td>
+                        <button
+                            class="btn btn-danger rounded-circle"
+                            (click)="$event.stopPropagation()"
+                            (click)="deleteMessage(message.id)"
+                        >
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center mt-3" *ngIf="pagination">
+        <pagination
+            [boundaryLinks]="true"
+            [totalItems]="pagination.totalItems"
+            [itemsPerPage]="pagination.itemsPerPage"
+            [maxSize]="6"
+            [(ngModel)]="pagination.currentPage"
+            (pageChanged)="pageChanged($event)"
+            previousText="&lsaquo;"
+            nextText="&rsaquo;"
+            firstText="&laquo;"
+            lastText="&raquo;"
+        >
+        </pagination>
+    </div>
+</div>
